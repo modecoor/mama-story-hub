@@ -8,89 +8,136 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Основные цвета - мягкий светлый минимализм */
+    --background: 0 0% 99%;
+    --foreground: 240 10% 15%;
 
+    /* Карточки с мягкими тенями */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 15%;
 
+    /* Поповеры */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Основной акцент - лаванда */
+    --primary: 270 50% 75%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 270 50% 70%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Вторичный цвет - мята */
+    --secondary: 160 30% 85%;
+    --secondary-foreground: 160 50% 25%;
+    --secondary-hover: 160 30% 80%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Приглушенные цвета */
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 5% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Акценты */
+    --accent: 270 40% 92%;
+    --accent-foreground: 270 50% 35%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Деструктивные действия */
+    --destructive: 0 65% 68%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Границы и поля ввода */
+    --border: 240 10% 90%;
+    --input: 240 10% 92%;
+    --ring: 270 50% 75%;
 
-    --radius: 0.5rem;
+    /* Увеличенный радиус для 2xl-скруглений */
+    --radius: 1rem;
 
+    /* Градиенты для мягкого материала */
+    --gradient-soft: linear-gradient(135deg, hsl(270 50% 95%), hsl(160 30% 95%));
+    --gradient-primary: linear-gradient(135deg, hsl(270 50% 75%), hsl(270 50% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(160 30% 85%), hsl(160 30% 75%));
+
+    /* Тени мягкого материала */
+    --shadow-soft: 0 4px 20px -2px hsl(270 50% 75% / 0.1);
+    --shadow-card: 0 8px 30px -4px hsl(270 50% 75% / 0.15);
+    --shadow-hover: 0 12px 40px -6px hsl(270 50% 75% / 0.2);
+
+    /* Боковая панель */
     --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 10% 20%;
+    --sidebar-primary: 270 50% 75%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 270 40% 92%;
+    --sidebar-accent-foreground: 270 50% 35%;
+    --sidebar-border: 240 10% 90%;
+    --sidebar-ring: 270 50% 75%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Специальные цвета для журнала */
+    --lavender: 270 50% 75%;
+    --lavender-light: 270 40% 92%;
+    --mint: 160 30% 85%;
+    --mint-light: 160 20% 92%;
+    --warm-white: 45 20% 98%;
+    --soft-gray: 240 5% 94%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Тёмная тема с сохранением пастельных акцентов */
+    --background: 240 10% 8%;
+    --foreground: 240 5% 92%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 10% 10%;
+    --card-foreground: 240 5% 92%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 240 5% 92%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Более яркие акценты в тёмной теме */
+    --primary: 270 50% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 270 50% 70%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 160 30% 70%;
+    --secondary-foreground: 160 50% 15%;
+    --secondary-hover: 160 30% 75%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 270 40% 20%;
+    --accent-foreground: 270 50% 75%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 58%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 240 10% 18%;
+    --input: 240 10% 16%;
+    --ring: 270 50% 65%;
+
+    /* Тёмные градиенты */
+    --gradient-soft: linear-gradient(135deg, hsl(240 10% 12%), hsl(240 10% 8%));
+    --gradient-primary: linear-gradient(135deg, hsl(270 50% 25%), hsl(270 50% 20%));
+    --gradient-secondary: linear-gradient(135deg, hsl(160 30% 25%), hsl(160 30% 20%));
+
+    /* Тёмные тени */
+    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.3);
+    --shadow-card: 0 8px 30px -4px hsl(0 0% 0% / 0.4);
+    --shadow-hover: 0 12px 40px -6px hsl(0 0% 0% / 0.5);
+
+    --sidebar-background: 240 10% 6%;
+    --sidebar-foreground: 240 5% 85%;
+    --sidebar-primary: 270 50% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 240 10% 12%;
+    --sidebar-accent-foreground: 270 50% 75%;
+    --sidebar-border: 240 10% 15%;
+    --sidebar-ring: 270 50% 65%;
+
+    /* Тёмные версии специальных цветов */
+    --lavender: 270 50% 65%;
+    --lavender-light: 270 40% 20%;
+    --mint: 160 30% 70%;
+    --mint-light: 160 20% 20%;
+    --warm-white: 240 10% 10%;
+    --soft-gray: 240 10% 15%;
   }
 }
 
@@ -101,5 +148,123 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Улучшенная типографика */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    line-height: 1.2;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  /* Читабельные интервалы для контента */
+  .content-prose {
+    @apply leading-relaxed;
+  }
+
+  .content-prose p {
+    @apply mb-4;
+  }
+
+  .content-prose h2 {
+    @apply mt-8 mb-4;
+  }
+
+  .content-prose h3 {
+    @apply mt-6 mb-3;
+  }
+
+  .content-prose ul, .content-prose ol {
+    @apply mb-4 ml-6;
+  }
+
+  .content-prose li {
+    @apply mb-2;
+  }
+
+  .content-prose blockquote {
+    @apply border-l-4 border-primary pl-4 italic my-6 text-muted-foreground;
+  }
+
+  /* Мягкие карточки с большими скруглениями */
+  .card-soft {
+    @apply bg-card rounded-2xl border border-border;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .card-soft:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  /* Градиентные фоны */
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+
+  /* Плавные переходы */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Фокус-состояния для a11y */
+  .focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2;
+  }
+
+  /* Анти-копирование для анонимных пользователей */
+  .content-protected {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  .content-protected.authenticated {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+  }
+
+  /* Запрет правого клика для анонимных */
+  .no-context-menu {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Скрытие скроллбара но сохранение функциональности */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
