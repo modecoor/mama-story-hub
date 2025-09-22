@@ -13,6 +13,7 @@ import Ask from "./pages/Ask";
 import Profile from "./pages/Profile";
 import PostPage from "./pages/PostPage";
 import Admin from "./pages/Admin";
+import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/search" element={<Search />} />
               <Route path="/submit" element={
                 <ProtectedRoute>
                   <Submit />

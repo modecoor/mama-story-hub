@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
+import { SearchBar } from './SearchBar';
 import { 
   Heart, 
   Home, 
@@ -14,12 +16,15 @@ import {
   Settings, 
   PenTool, 
   MessageCircleQuestion,
-  Shield 
+  Shield,
+  Menu,
+  X
 } from 'lucide-react';
 
 export const Navigation = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -29,6 +34,10 @@ export const Navigation = () => {
   const getInitials = (email?: string) => {
     if (!email) return 'У';
     return email.charAt(0).toUpperCase();
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -42,47 +51,31 @@ export const Navigation = () => {
           </span>
         </Link>
 
-        {/* Основная навигация */}
-        <div className="hidden md:flex items-center space-x-6">
-          <Link 
-            to="/" 
-            className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Home className="h-4 w-4" />
-            <span>Главная</span>
-          </Link>
-          
-          <Link 
-            to="/search" 
-            className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Search className="h-4 w-4" />
-            <span>Поиск</span>
-          </Link>
-
-          {user && (
-            <>
-              <Link 
-                to="/submit" 
-                className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <PenTool className="h-4 w-4" />
-                <span>Написать</span>
-              </Link>
-              
-              <Link 
-                to="/ask" 
-                className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <MessageCircleQuestion className="h-4 w-4" />
-                <span>Вопрос</span>
-              </Link>
-            </>
-          )}
+        {/* Поиск (десктоп) */}
+        <div className="hidden md:flex items-center flex-1 max-w-sm mx-8">
+          <SearchBar />
         </div>
 
-        {/* Правая часть навигации */}
-        <div className="flex items-center space-x-3">
+        {/* Десктопная навигация */}
+        <div className="hidden md:flex items-center space-x-4">
+          {user && (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/submit" className="flex items-center space-x-2">
+                  <PenTool className="h-4 w-4" />
+                  <span>Написать</span>
+                </Link>
+              </Button>
+              
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/ask" className="flex items-center space-x-2">
+                  <MessageCircleQuestion className="h-4 w-4" />
+                  <span>Спросить</span>
+                </Link>
+              </Button>
+            </>
+          )}
+          
           <ThemeToggle />
           
           {user ? (
@@ -116,13 +109,6 @@ export const Navigation = () => {
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem asChild>
-                  <Link to="/me" className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Настройки</span>
-                  </Link>
-                </DropdownMenuItem>
-                
-                <DropdownMenuItem asChild>
                   <Link to="/admin" className="flex items-center">
                     <Shield className="mr-2 h-4 w-4" />
                     <span>Админка</span>
@@ -142,6 +128,146 @@ export const Navigation = () => {
               <Link to="/auth">Войти</Link>
             </Button>
           )}
+        </div>
+
+        {/* Мобильная навигация */}
+        <div className="flex md:hidden items-center space-x-2">
+          <ThemeToggle />
+          
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80">
+              <div className="flex flex-col space-y-4 mt-8">
+                {/* Мобильный поиск */}
+                <div className="px-1">
+                  <SearchBar onClose={closeMobileMenu} />
+                </div>
+                
+                <div className="border-t pt-4">
+                  {user ? (
+                    <div className="space-y-4">
+                      {/* Профиль пользователя */}
+                      <div className="flex items-center space-x-3 px-1">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="/placeholder.svg" alt="Аватар" />
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                            {getInitials(user.email)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium text-sm">{user.email}</p>
+                          <p className="text-xs text-muted-foreground">Пользователь</p>
+                        </div>
+                      </div>
+                      
+                      {/* Навигационные ссылки */}
+                      <div className="space-y-2">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start" 
+                          asChild
+                          onClick={closeMobileMenu}
+                        >
+                          <Link to="/">
+                            <Home className="mr-3 h-4 w-4" />
+                            Главная
+                          </Link>
+                        </Button>
+                        
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start" 
+                          asChild
+                          onClick={closeMobileMenu}
+                        >
+                          <Link to="/submit">
+                            <PenTool className="mr-3 h-4 w-4" />
+                            Написать пост
+                          </Link>
+                        </Button>
+                        
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start" 
+                          asChild
+                          onClick={closeMobileMenu}
+                        >
+                          <Link to="/ask">
+                            <MessageCircleQuestion className="mr-3 h-4 w-4" />
+                            Задать вопрос
+                          </Link>
+                        </Button>
+                        
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start" 
+                          asChild
+                          onClick={closeMobileMenu}
+                        >
+                          <Link to="/me">
+                            <User className="mr-3 h-4 w-4" />
+                            Личный кабинет
+                          </Link>
+                        </Button>
+                        
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start" 
+                          asChild
+                          onClick={closeMobileMenu}
+                        >
+                          <Link to="/admin">
+                            <Shield className="mr-3 h-4 w-4" />
+                            Админка
+                          </Link>
+                        </Button>
+                      </div>
+                      
+                      <div className="border-t pt-4">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start text-destructive hover:text-destructive" 
+                          onClick={() => {
+                            handleSignOut();
+                            closeMobileMenu();
+                          }}
+                        >
+                          <LogOut className="mr-3 h-4 w-4" />
+                          Выйти
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start" 
+                        asChild
+                        onClick={closeMobileMenu}
+                      >
+                        <Link to="/">
+                          <Home className="mr-3 h-4 w-4" />
+                          Главная
+                        </Link>
+                      </Button>
+                      
+                      <Button 
+                        className="w-full" 
+                        asChild
+                        onClick={closeMobileMenu}
+                      >
+                        <Link to="/auth">Войти</Link>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
