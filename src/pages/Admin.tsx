@@ -13,6 +13,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { SafeHtmlRenderer } from '@/components/SafeHtmlRenderer';
+import UserManagement from '@/components/UserManagement';
+import AIIntegrations from '@/components/AIIntegrations';
 import { 
   Shield, 
   Eye, 
@@ -27,7 +29,9 @@ import {
   BarChart3,
   Settings,
   AlertTriangle,
-  Search
+  Search,
+  Bot,
+  UserCog
 } from 'lucide-react';
 
 interface ModerationPost {
@@ -94,7 +98,7 @@ const Admin = () => {
 
       if (error) throw error;
 
-      if (!profile || !['admin', 'editor'].includes(profile.role)) {
+      if (!profile || !['admin', 'editor', 'moderator'].includes(profile.role)) {
         toast({
           title: 'Доступ запрещен',
           description: 'У вас нет прав для доступа к админке',
@@ -317,7 +321,8 @@ const Admin = () => {
             </div>
           </div>
           <Badge variant="secondary">
-            {userProfile?.role === 'admin' ? 'Администратор' : 'Редактор'}
+            {userProfile?.role === 'admin' ? 'Администратор' : 
+             userProfile?.role === 'editor' ? 'Редактор' : 'Модератор'}
           </Badge>
         </div>
 
@@ -374,7 +379,13 @@ const Admin = () => {
 
         {/* Основной контент */}
         <Tabs defaultValue="moderation" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:w-96">
+          <TabsList className={`grid w-full ${
+            userProfile?.role === 'admin' 
+              ? 'grid-cols-5' 
+              : userProfile?.role === 'editor' 
+                ? 'grid-cols-4' 
+                : 'grid-cols-2'
+          } lg:w-auto`}>
             <TabsTrigger value="moderation" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Модерация</span>
@@ -395,10 +406,26 @@ const Admin = () => {
               )}
             </TabsTrigger>
             
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Аналитика</span>
-            </TabsTrigger>
+            {(userProfile?.role === 'admin' || userProfile?.role === 'editor') && (
+              <TabsTrigger value="analytics" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                <span className="hidden sm:inline">Аналитика</span>
+              </TabsTrigger>
+            )}
+
+            {userProfile?.role === 'admin' && (
+              <>
+                <TabsTrigger value="users" className="flex items-center gap-2">
+                  <UserCog className="h-4 w-4" />
+                  <span className="hidden sm:inline">Пользователи</span>
+                </TabsTrigger>
+                
+                <TabsTrigger value="integrations" className="flex items-center gap-2">
+                  <Bot className="h-4 w-4" />
+                  <span className="hidden sm:inline">ИИ Интеграции</span>
+                </TabsTrigger>
+              </>
+            )}
           </TabsList>
 
           {/* Модерация */}
@@ -664,6 +691,20 @@ const Admin = () => {
               </Card>
             </div>
           </TabsContent>
+
+          {/* Управление пользователями (только для админов) */}
+          {userProfile?.role === 'admin' && (
+            <TabsContent value="users" className="mt-6">
+              <UserManagement />
+            </TabsContent>
+          )}
+
+          {/* ИИ Интеграции (только для админов) */}
+          {userProfile?.role === 'admin' && (
+            <TabsContent value="integrations" className="mt-6">
+              <AIIntegrations />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

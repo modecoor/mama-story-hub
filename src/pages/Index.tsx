@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigation } from '@/components/Navigation';
 import { FeedTabs } from '@/components/FeedTabs';
 import { useCategories } from '@/hooks/useCategories';
+import { useHomepageStats } from '@/hooks/useHomepageStats';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ import {
 const Index = () => {
   const { user } = useAuth();
   const { categories, loading: categoriesLoading } = useCategories();
+  const { stats, loading: statsLoading } = useHomepageStats();
 
   return (
     <div className="min-h-screen bg-gradient-soft">
@@ -66,7 +68,9 @@ const Index = () => {
             <Card className="card-soft">
               <CardContent className="pt-6 text-center">
                 <TrendingUp className="h-8 w-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">1,234</div>
+                <div className="text-2xl font-bold text-foreground">
+                  {statsLoading ? '...' : stats.total_stories.toLocaleString()}
+                </div>
                 <div className="text-sm text-muted-foreground">Историй</div>
               </CardContent>
             </Card>
@@ -74,7 +78,9 @@ const Index = () => {
             <Card className="card-soft">
               <CardContent className="pt-6 text-center">
                 <Users className="h-8 w-8 text-secondary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">567</div>
+                <div className="text-2xl font-bold text-foreground">
+                  {statsLoading ? '...' : stats.total_users.toLocaleString()}
+                </div>
                 <div className="text-sm text-muted-foreground">Участниц</div>
               </CardContent>
             </Card>
@@ -82,7 +88,9 @@ const Index = () => {
             <Card className="card-soft">
               <CardContent className="pt-6 text-center">
                 <MessageCircleQuestion className="h-8 w-8 text-accent mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">89</div>
+                <div className="text-2xl font-bold text-foreground">
+                  {statsLoading ? '...' : stats.total_questions.toLocaleString()}
+                </div>
                 <div className="text-sm text-muted-foreground">Вопросов</div>
               </CardContent>
             </Card>

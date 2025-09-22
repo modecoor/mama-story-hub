@@ -1,1 +1,7 @@
 project_id = "rkxyucrvjwnjbcxqkord"
+
+[functions.ai-webhook]
+verify_jwt = false
+
+[functions.update-stats]
+verify_jwt = false
