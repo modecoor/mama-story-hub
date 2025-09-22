@@ -31,7 +31,7 @@ import {
 interface UserStats {
   totalPosts: number;
   publishedPosts: number;
-  pendingPosts: number;
+  draftPosts: number;
   totalViews: number;
   totalLikes: number;
   totalComments: number;
@@ -56,7 +56,7 @@ const Profile = () => {
   const [stats, setStats] = useState<UserStats>({
     totalPosts: 0,
     publishedPosts: 0,
-    pendingPosts: 0,
+    draftPosts: 0,
     totalViews: 0,
     totalLikes: 0,
     totalComments: 0,
@@ -68,7 +68,6 @@ const Profile = () => {
   const draftPosts = usePosts({ authorId: user?.id, status: 'draft' });
   const pendingPosts = usePosts({ authorId: user?.id, status: 'pending' });
   const publishedPosts = usePosts({ authorId: user?.id, status: 'published' });
-  const rejectedPosts = usePosts({ authorId: user?.id, status: 'rejected' });
 
   // Проверка авторизации
   if (!user) {
@@ -115,7 +114,7 @@ const Profile = () => {
 
       const totalPosts = postsStats?.length || 0;
       const publishedPosts = postsStats?.filter(p => p.status === 'published').length || 0;
-      const pendingPosts = postsStats?.filter(p => p.status === 'pending').length || 0;
+      const draftPosts = postsStats?.filter(p => p.status === 'draft').length || 0;
 
       // Статистика сигналов (просмотры, лайки и т.д.)
       const { data: signalsStats, error: signalsError } = await supabase
@@ -143,7 +142,7 @@ const Profile = () => {
       setStats({
         totalPosts,
         publishedPosts,
-        pendingPosts,
+        draftPosts,
         totalViews,
         totalLikes,
         totalComments,
@@ -404,17 +403,6 @@ const Profile = () => {
                     </Badge>
                   )}
                 </TabsTrigger>
-                
-                <TabsTrigger value="rejected" className="flex items-center gap-2">
-                  {getStatusIcon('rejected')}
-                  <span className="hidden sm:inline">Отклоненные</span>
-                  <span className="sm:hidden">Откл.</span>
-                  {rejectedPosts.posts.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 text-xs">
-                      {rejectedPosts.posts.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="published" className="mt-6">
@@ -453,19 +441,6 @@ const Profile = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="rejected" className="mt-6">
-                <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-sm text-red-800 dark:text-red-200">
-                    <XCircle className="h-4 w-4 inline mr-1" />
-                    Эти посты не прошли модерацию. Вы можете отредактировать их и отправить повторно.
-                  </p>
-                </div>
-                <PostsList 
-                  posts={rejectedPosts.posts} 
-                  loading={rejectedPosts.loading} 
-                  error={rejectedPosts.error} 
-                />
-              </TabsContent>
             </Tabs>
           </div>
         </div>

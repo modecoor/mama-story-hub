@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Submit from "./pages/Submit";
@@ -27,11 +28,27 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/submit" element={<Submit />} />
-              <Route path="/ask" element={<Ask />} />
-              <Route path="/me" element={<Profile />} />
+              <Route path="/submit" element={
+                <ProtectedRoute>
+                  <Submit />
+                </ProtectedRoute>
+              } />
+              <Route path="/ask" element={
+                <ProtectedRoute>
+                  <Ask />
+                </ProtectedRoute>
+              } />
+              <Route path="/me" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
               <Route path="/p/:slug" element={<PostPage />} />
-              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin" element={
+                <ProtectedRoute adminOnly>
+                  <Admin />
+                </ProtectedRoute>
+              } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

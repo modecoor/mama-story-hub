@@ -1,41 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Post } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
-
-export interface Post {
-  id: string;
-  type: 'article' | 'story' | 'question';
-  slug: string;
-  title: string;
-  subtitle?: string;
-  cover_image_url?: string;
-  content_html?: string;
-  tldr?: string;
-  status: 'draft' | 'pending' | 'published' | 'rejected';
-  published_at?: string;
-  author_id: string;
-  category_id?: string;
-  created_at: string;
-  updated_at: string;
-  // Связанные данные
-  profiles?: {
-    username?: string;
-    avatar_url?: string;
-  };
-  categories?: {
-    title: string;
-    slug: string;
-  };
-  post_tags?: {
-    tags: {
-      title: string;
-      slug: string;
-    };
-  }[];
-  _count?: {
-    comments: number;
-    signals: number;
-  };
-}
 
 export interface UsePostsOptions {
   status?: Post['status'];

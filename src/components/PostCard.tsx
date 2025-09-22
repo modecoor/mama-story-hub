@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Post } from '@/hooks/usePosts';
+import { Post } from '@/types';
 import { 
   Heart, 
   MessageCircle, 
@@ -175,11 +175,11 @@ export const PostCard: React.FC<PostCardProps> = ({
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <div className="flex items-center space-x-1">
               <Eye className="h-4 w-4" />
-              <span>{post._count?.signals || 0}</span>
+              <span>0</span>
             </div>
             <div className="flex items-center space-x-1">
               <MessageCircle className="h-4 w-4" />
-              <span>{post._count?.comments || 0}</span>
+              <span>0</span>
             </div>
           </div>
 

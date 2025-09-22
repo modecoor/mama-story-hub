@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Category } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
-
-export interface Category {
-  id: string;
-  slug: string;
-  title: string;
-  description?: string;
-  created_at: string;
-}
 
 export const useCategories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
