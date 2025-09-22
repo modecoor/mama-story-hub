@@ -38,11 +38,11 @@ interface ExtendedPost extends Post {
 }
 
 interface Comment {
-  id: string;
+  id: number;
   content_html: string;
   created_at: string;
   user_id?: string;
-  parent_id?: string;
+  parent_id?: number;
   profiles?: {
     username?: string;
     avatar_url?: string;

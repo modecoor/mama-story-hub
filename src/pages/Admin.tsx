@@ -243,7 +243,7 @@ const Admin = () => {
       const { error } = await supabase
         .from('reports')
         .update({ status: action })
-        .eq('id', reportId);
+        .eq('id', parseInt(reportId));
 
       if (error) throw error;
 

@@ -108,7 +108,7 @@ const Profile = () => {
       // Статистика постов
       const { data: postsStats, error: postsError } = await supabase
         .from('posts')
-        .select('status')
+        .select('id, status')
         .eq('author_id', user.id);
 
       if (postsError) throw postsError;
