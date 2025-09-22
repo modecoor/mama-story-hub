@@ -1,3 +1,4 @@
+import { SocialAuthButtons } from '@/components/SocialAuthButtons';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -110,6 +111,8 @@ const Auth = () => {
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Войти
                 </Button>
+                
+                <SocialAuthButtons />
               </form>
             </TabsContent>
             
@@ -142,6 +145,8 @@ const Auth = () => {
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Зарегистрироваться
                 </Button>
+                
+                <SocialAuthButtons />
                 <div className="text-sm text-muted-foreground text-center">
                   После регистрации на ваш email будет отправлено письмо для подтверждения аккаунта
                 </div>
