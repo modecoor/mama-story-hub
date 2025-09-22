@@ -9,6 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCategories } from '@/hooks/useCategories';
+import { ImageUpload } from '@/components/ImageUpload';
+import { SEOFields } from '@/components/SEOFields';
+import { TagSelector } from '@/components/TagSelector';
+import { useProfile } from '@/hooks/useProfile';
 import { RichTextEditor } from './RichTextEditor';
 import { SafeHtmlRenderer } from './SafeHtmlRenderer';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,6 +35,10 @@ export const PostEditor: React.FC<PostEditorProps> = ({
   const { user } = useAuth();
   const { toast } = useToast();
   const { categories } = useCategories();
+  const { profile } = useProfile();
+  
+  // Проверяем роль пользователя
+  const isAdminOrEditor = profile?.role && ['admin', 'editor'].includes(profile.role);
   
   const [formData, setFormData] = useState({
     title: post?.title || '',
@@ -460,32 +468,13 @@ export const PostEditor: React.FC<PostEditorProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Теги</Label>
-                  <div className="flex space-x-2">
-                    <Input
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      placeholder="Добавить тег"
-                      onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
-                    />
-                    <Button size="sm" onClick={handleAddTag}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {tags.map(tag => (
-                        <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                          {tag}
-                          <X
-                            className="h-3 w-3 cursor-pointer"
-                            onClick={() => handleRemoveTag(tag)}
-                          />
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
+                  <Label>Теги (до 5)</Label>
+                  <TagSelector
+                    selectedTags={tags}
+                    onTagsChange={setTags}
+                    maxTags={5}
+                    disabled={false}
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-2 pt-4">
@@ -509,42 +498,20 @@ export const PostEditor: React.FC<PostEditorProps> = ({
               </CardContent>
             </Card>
 
-            {/* SEO настройки */}
-            <Card>
-              <CardHeader>
-                <CardTitle>SEO</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seo-title">SEO заголовок</Label>
-                  <Input
-                    id="seo-title"
-                    value={formData.seo_title}
-                    onChange={(e) => handleInputChange('seo_title', e.target.value)}
-                    placeholder="Заголовок для поисковиков"
-                    maxLength={60}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {formData.seo_title.length}/60 символов
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="seo-description">SEO описание</Label>
-                  <Textarea
-                    id="seo-description"
-                    value={formData.seo_description}
-                    onChange={(e) => handleInputChange('seo_description', e.target.value)}
-                    placeholder="Описание для поисковиков"
-                    rows={3}
-                    maxLength={160}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {formData.seo_description.length}/160 символов
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            {/* SEO настройки - только для админов/редакторов */}
+            <SEOFields
+              title={formData.title}
+              seoTitle={formData.seo_title}
+              seoDescription={formData.seo_description}
+              focusKeywords={formData.focus_keywords}
+              canonical={formData.canonical}
+              noindex={formData.noindex}
+              onSeoTitleChange={(value) => handleInputChange('seo_title', value)}
+              onSeoDescriptionChange={(value) => handleInputChange('seo_description', value)}
+              onFocusKeywordsChange={(keywords) => handleInputChange('focus_keywords', keywords)}
+              onCanonicalChange={(value) => handleInputChange('canonical', value)}
+              onNoindexChange={(value) => handleInputChange('noindex', value)}
+            />
           </div>
         </div>
       )}

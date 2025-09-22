@@ -402,6 +402,15 @@ export type Database = {
         Args: { username_to_check: string }
         Returns: boolean
       }
+      get_available_tags: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          id: string
+          slug: string
+          title: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
