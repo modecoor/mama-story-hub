@@ -14,6 +14,193 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      comments: {
+        Row: {
+          content_html: string
+          created_at: string
+          id: number
+          parent_id: number | null
+          post_id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          content_html: string
+          created_at?: string
+          id?: never
+          parent_id?: number | null
+          post_id: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          content_html?: string
+          created_at?: string
+          id?: never
+          parent_id?: number | null
+          post_id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      post_tags: {
+        Row: {
+          post_id: string
+          tag_id: string
+        }
+        Insert: {
+          post_id: string
+          tag_id: string
+        }
+        Update: {
+          post_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_tags_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string
+          canonical: string | null
+          category_id: string | null
+          content_html: string | null
+          cover_image_url: string | null
+          created_at: string
+          focus_keywords: string[] | null
+          id: string
+          noindex: boolean | null
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          subtitle: string | null
+          title: string
+          tldr: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          canonical?: string | null
+          category_id?: string | null
+          content_html?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          focus_keywords?: string[] | null
+          id?: string
+          noindex?: boolean | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          subtitle?: string | null
+          title: string
+          tldr?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          canonical?: string | null
+          category_id?: string | null
+          content_html?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          focus_keywords?: string[] | null
+          id?: string
+          noindex?: boolean | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          subtitle?: string | null
+          title?: string
+          tldr?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -49,6 +236,159 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      reports: {
+        Row: {
+          comment_id: number | null
+          created_at: string
+          id: number
+          post_id: string | null
+          reason: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          comment_id?: number | null
+          created_at?: string
+          id?: never
+          post_id?: string | null
+          reason: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          comment_id?: number | null
+          created_at?: string
+          id?: never
+          post_id?: string | null
+          reason?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      signals: {
+        Row: {
+          created_at: string
+          id: number
+          meta: Json | null
+          post_id: string
+          type: string
+          user_id: string | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          meta?: Json | null
+          post_id: string
+          type: string
+          user_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          meta?: Json | null
+          post_id?: string
+          type?: string
+          user_id?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signals_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: string
+          slug: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          slug: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      uploads: {
+        Row: {
+          created_at: string
+          file_size: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uploads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
     }
     Views: {
