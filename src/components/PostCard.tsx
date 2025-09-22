@@ -5,25 +5,16 @@ import { ru } from 'date-fns/locale';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
 import { Post } from '@/types';
-import { 
-  Heart, 
-  MessageCircle, 
-  Share2, 
-  Bookmark, 
-  Eye,
-  Clock,
-  User
-} from 'lucide-react';
+import { PostActions } from './PostActions';
+import { Clock } from 'lucide-react';
 
 interface PostCardProps {
   post: Post;
   onLike?: (postId: string) => void;
   onBookmark?: (postId: string) => void;
   onShare?: (postId: string) => void;
-  className?: string;
+  showActions?: boolean;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ 
@@ -31,197 +22,170 @@ export const PostCard: React.FC<PostCardProps> = ({
   onLike, 
   onBookmark, 
   onShare,
-  className = '' 
+  showActions = true 
 }) => {
-  const { user } = useAuth();
+  const getInitials = (username?: string) => {
+    if (!username) return 'А';
+    return username.charAt(0).toUpperCase();
+  };
 
-  const getTypeLabel = (type: Post['type']) => {
+  const getTypeLabel = (type: string) => {
     switch (type) {
+      case 'article': return 'Статья';
       case 'story': return 'История';
       case 'question': return 'Вопрос';
-      case 'article': return 'Статья';
-      default: return 'Пост';
+      default: return type;
     }
   };
 
-  const getTypeColor = (type: Post['type']) => {
+  const getTypeColor = (type: string) => {
     switch (type) {
-      case 'story': return 'bg-secondary text-secondary-foreground';
-      case 'question': return 'bg-primary text-primary-foreground';
-      case 'article': return 'bg-accent text-accent-foreground';
-      default: return 'bg-muted text-muted-foreground';
+      case 'article': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'story': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'question': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return formatDistanceToNow(new Date(dateString), { 
-      addSuffix: true, 
-      locale: ru 
-    });
-  };
-
-  const truncateContent = (html?: string, maxLength = 150) => {
-    if (!html) return '';
-    const text = html.replace(/<[^>]*>/g, '');
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength).trim() + '...';
   };
 
   return (
-    <Card className={`card-soft transition-smooth ${className}`}>
-      {/* Обложка */}
+    <Card className="card-soft h-full flex flex-col group">
+      {/* Header */}
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={post.profiles?.avatar_url} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {getInitials(post.profiles?.username)}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm text-foreground">
+                {post.profiles?.username || 'Анонимный автор'}
+              </p>
+              <div className="flex items-center space-x-2 mt-1">
+                <time className="text-xs text-muted-foreground flex items-center">
+                  <Clock className="h-3 w-3 mr-1" />
+                  {formatDistanceToNow(new Date(post.published_at || post.created_at), {
+                    addSuffix: true,
+                    locale: ru
+                  })}
+                </time>
+                <Badge variant="secondary" className={`text-xs ${getTypeColor(post.type)}`}>
+                  {getTypeLabel(post.type)}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Category */}
+        {post.categories && (
+          <div className="mb-3">
+            <Link 
+              to={`/category/${post.categories.slug}`}
+              className="inline-flex items-center text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              #{post.categories.title}
+            </Link>
+          </div>
+        )}
+
+        {/* Title */}
+        <div>
+          <Link to={`/p/${post.slug}`}>
+            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
+              {post.title}
+            </h3>
+          </Link>
+          
+          {post.subtitle && (
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              {post.subtitle}
+            </p>
+          )}
+        </div>
+      </CardHeader>
+
+      {/* Cover Image */}
       {post.cover_image_url && (
-        <div className="relative h-48 overflow-hidden rounded-t-2xl">
-          <img
-            src={post.cover_image_url}
-            alt={post.title}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-          <Badge 
-            className={`absolute top-3 left-3 ${getTypeColor(post.type)}`}
-          >
-            {getTypeLabel(post.type)}
-          </Badge>
+        <div className="px-6 pb-3">
+          <Link to={`/p/${post.slug}`} className="block">
+            <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+              <img
+                src={post.cover_image_url}
+                alt={post.title}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+          </Link>
         </div>
       )}
 
-      <CardHeader className="pb-3">
-        {/* Мета информация */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-          <div className="flex items-center space-x-2">
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={post.profiles?.avatar_url} />
-              <AvatarFallback className="text-xs">
-                <User className="h-3 w-3" />
-              </AvatarFallback>
-            </Avatar>
-            <span>{post.profiles?.username || 'Аноним'}</span>
-          </div>
-          
-          <div className="flex items-center space-x-1">
-            <Clock className="h-3 w-3" />
-            <span>{formatDate(post.published_at || post.created_at)}</span>
-          </div>
-        </div>
-
-        {/* Заголовок */}
-        <Link 
-          to={`/p/${post.slug}`}
-          className="group"
-        >
-          <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
-            {post.title}
-          </h3>
-        </Link>
-
-        {/* Подзаголовок */}
-        {post.subtitle && (
-          <p className="text-muted-foreground text-sm line-clamp-1">
-            {post.subtitle}
-          </p>
-        )}
-      </CardHeader>
-
-      <CardContent className="pt-0">
-        {/* Краткое содержание */}
+      {/* Content Preview */}
+      <CardContent className="flex-1 pt-0">
         {post.tldr && (
-          <div className="bg-accent/30 rounded-lg p-3 mb-3">
-            <p className="text-sm font-medium text-accent-foreground">
-              Кратко: {post.tldr}
-            </p>
+          <div className="mb-4">
+            <div className="bg-muted/50 rounded-lg p-3 border-l-4 border-primary">
+              <p className="text-sm font-medium text-muted-foreground mb-1">
+                Коротко:
+              </p>
+              <p className="text-sm text-foreground">
+                {truncateText(post.tldr, 120)}
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Превью контента */}
-        {post.content_html && (
-          <p className="text-sm text-muted-foreground line-clamp-3">
-            {truncateContent(post.content_html)}
-          </p>
+        {post.content_html && !post.tldr && (
+          <div 
+            className="text-sm text-muted-foreground line-clamp-3"
+            dangerouslySetInnerHTML={{ 
+              __html: truncateText(post.content_html.replace(/<[^>]*>/g, ''), 150) 
+            }}
+          />
         )}
 
-        {/* Теги */}
+        {/* Tags */}
         {post.post_tags && post.post_tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
-            {post.post_tags.slice(0, 3).map((tagRelation, index) => (
+          <div className="flex flex-wrap gap-1 mt-4">
+            {post.post_tags.slice(0, 3).map((postTag, index) => (
               <Link
                 key={index}
-                to={`/t/${tagRelation.tags.slug}`}
-                className="text-xs text-primary hover:underline"
+                to={`/tag/${postTag.tags.slug}`}
+                className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-secondary/50 text-secondary-foreground hover:bg-secondary transition-colors"
               >
-                #{tagRelation.tags.title}
+                #{postTag.tags.title}
               </Link>
             ))}
             {post.post_tags.length > 3 && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground px-2 py-1">
                 +{post.post_tags.length - 3}
               </span>
             )}
           </div>
         )}
-
-        {/* Категория */}
-        {post.categories && (
-          <Link
-            to={`/c/${post.categories.slug}`}
-            className="inline-flex items-center text-xs text-muted-foreground hover:text-primary mt-2"
-          >
-            {post.categories.title}
-          </Link>
-        )}
       </CardContent>
 
-      <CardFooter className="pt-0">
-        <div className="flex items-center justify-between w-full">
-          {/* Статистика */}
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-1">
-              <Eye className="h-4 w-4" />
-              <span>0</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <MessageCircle className="h-4 w-4" />
-              <span>0</span>
-            </div>
-          </div>
-
-          {/* Действия */}
-          <div className="flex items-center space-x-1">
-            {user ? (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onLike?.(post.id)}
-                  className="h-8 w-8 p-0 hover:text-red-500"
-                >
-                  <Heart className="h-4 w-4" />
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onBookmark?.(post.id)}
-                  className="h-8 w-8 p-0 hover:text-blue-500"
-                >
-                  <Bookmark className="h-4 w-4" />
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onShare?.(post.id)}
-                  className="h-8 w-8 p-0 hover:text-green-500"
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </>
-            ) : (
-              <div className="text-xs text-muted-foreground">
-                Войдите для взаимодействия
-              </div>
-            )}
-          </div>
-        </div>
-      </CardFooter>
+      {/* Actions */}
+      {showActions && (
+        <CardFooter className="pt-0">
+          <PostActions
+            postId={post.id}
+            onLike={() => onLike?.(post.id)}
+            onBookmark={() => onBookmark?.(post.id)}
+            onShare={() => onShare?.(post.id)}
+            className="w-full"
+          />
+        </CardFooter>
+      )}
     </Card>
   );
 };

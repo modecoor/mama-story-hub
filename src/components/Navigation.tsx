@@ -116,7 +116,7 @@ export const Navigation = () => {
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem asChild>
-                  <Link to="/me/settings" className="flex items-center">
+                  <Link to="/me" className="flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Настройки</span>
                   </Link>

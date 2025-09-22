@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/hooks/usePosts';
 import { PostCard } from '@/components/PostCard';
+import { StatsCard } from '@/components/StatsCard';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -223,7 +224,7 @@ const Profile = () => {
             <User className="h-8 w-8 text-primary mr-3" />
             <h1 className="text-3xl font-bold">Личный кабинет</h1>
           </div>
-          <Button variant="outline" onClick={() => navigate('/me/settings')}>
+          <Button variant="outline" disabled>
             <Settings className="h-4 w-4 mr-2" />
             Настройки
           </Button>

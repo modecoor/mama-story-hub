@@ -11,7 +11,11 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Post } from '@/types';
+import { Post, ExtendedPost, Comment } from '@/types';
+import { useSignals } from '@/hooks/useSignals';
+import { PostActions } from '@/components/PostActions';
+import { CommentForm } from '@/components/CommentForm';
+import { CommentsList } from '@/components/CommentsList';
 import { 
   Heart, 
   MessageCircle, 
@@ -29,32 +33,12 @@ import {
   Home
 } from 'lucide-react';
 
-interface ExtendedPost extends Post {
-  view_count?: number;
-  like_count?: number;
-  dislike_count?: number;
-  bookmark_count?: number;
-  comment_count?: number;
-}
-
-interface Comment {
-  id: number;
-  content_html: string;
-  created_at: string;
-  user_id?: string;
-  parent_id?: number;
-  profiles?: {
-    username?: string;
-    avatar_url?: string;
-  };
-  replies?: Comment[];
-}
-
 const PostPage = () => {
   const { slug } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { sendSignal } = useSignals();
   
   const [post, setPost] = useState<ExtendedPost | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -78,10 +62,16 @@ const PostPage = () => {
 
   useEffect(() => {
     // Записываем просмотр поста
-    if (post) {
+    if (post && post.id) {
       recordView();
     }
-  }, [post, user]);
+  }, [post?.id]);
+
+  const recordView = async () => {
+    if (post) {
+      await sendSignal(post.id, 'view');
+    }
+  };
 
   const fetchPost = async () => {
     try {
@@ -179,23 +169,6 @@ const PostPage = () => {
       setRelatedPosts((data || []) as Post[]);
     } catch (error) {
       console.error('Ошибка загрузки похожих постов:', error);
-    }
-  };
-
-  const recordView = async () => {
-    if (!post) return;
-
-    try {
-      await supabase.from('signals').upsert({
-        post_id: post.id,
-        user_id: user?.id || null,
-        type: 'view',
-        value: 1
-      }, {
-        onConflict: 'user_id,post_id,type'
-      });
-    } catch (error) {
-      console.error('Ошибка записи просмотра:', error);
     }
   };
 

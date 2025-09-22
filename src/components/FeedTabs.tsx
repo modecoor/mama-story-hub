@@ -2,32 +2,47 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PostCard } from './PostCard';
 import { usePosts } from '@/hooks/usePosts';
+import { useSignals } from '@/hooks/useSignals';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw } from 'lucide-react';
 
 export const FeedTabs = () => {
   const { user } = useAuth();
+  const { sendSignal } = useSignals();
   
   const forYouPosts = usePosts({ mode: 'for-you', limit: 10 });
   const popularPosts = usePosts({ mode: 'popular', limit: 10 });
   const newPosts = usePosts({ mode: 'new', limit: 10 });
 
   const handleLike = async (postId: string) => {
-    if (!user) return;
-    // TODO: реализовать лайки через API сигналов
-    console.log('Like post:', postId);
+    await sendSignal(postId, 'like');
+    // Refresh posts after action
+    forYouPosts.refresh();
+    popularPosts.refresh();
+    newPosts.refresh();
   };
 
   const handleBookmark = async (postId: string) => {
-    if (!user) return;
-    // TODO: реализовать закладки через API сигналов
-    console.log('Bookmark post:', postId);
+    await sendSignal(postId, 'bookmark');
   };
 
   const handleShare = async (postId: string) => {
-    // TODO: реализовать шаринг
-    console.log('Share post:', postId);
+    await sendSignal(postId, 'share');
+    
+    // Copy link to clipboard
+    const link = `${window.location.origin}/p/${postId}`;
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
   };
 
   const PostsList = ({ 
