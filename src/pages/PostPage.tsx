@@ -16,6 +16,7 @@ import { useSignals } from '@/hooks/useSignals';
 import { PostActions } from '@/components/PostActions';
 import { CommentForm } from '@/components/CommentForm';
 import { CommentsList } from '@/components/CommentsList';
+import { SafeHtmlRenderer } from '@/components/SafeHtmlRenderer';
 import { 
   Heart, 
   MessageCircle, 
@@ -476,11 +477,9 @@ const PostPage = () => {
               {/* Основной контент */}
               <Card className="card-soft">
                 <CardContent className="pt-6">
-                  <div 
+                  <SafeHtmlRenderer
+                    html={post.content_html || ''}
                     className={`content-prose ${!user ? 'content-protected no-context-menu' : 'content-protected authenticated'}`}
-                    dangerouslySetInnerHTML={{ 
-                      __html: post.content_html || '' 
-                    }}
                   />
                 </CardContent>
               </Card>
@@ -593,9 +592,9 @@ const PostPage = () => {
                               })}
                             </span>
                           </div>
-                          <div 
+                          <SafeHtmlRenderer
+                            html={comment.content_html}
                             className="text-sm content-prose"
-                            dangerouslySetInnerHTML={{ __html: comment.content_html }}
                           />
                         </div>
                       ))}

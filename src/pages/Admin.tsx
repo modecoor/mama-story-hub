@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { SafeHtmlRenderer } from '@/components/SafeHtmlRenderer';
 import { 
   Shield, 
   Eye, 
@@ -448,11 +449,9 @@ const Admin = () => {
                                     Предпросмотр поста от {post.profiles?.username || 'Аноним'}
                                   </DialogDescription>
                                 </DialogHeader>
-                                <div 
+                                <SafeHtmlRenderer
+                                  html={post.content_html || ''}
                                   className="content-prose mt-4"
-                                  dangerouslySetInnerHTML={{ 
-                                    __html: post.content_html || '' 
-                                  }}
                                 />
                                 <DialogFooter className="gap-2">
                                   <Button

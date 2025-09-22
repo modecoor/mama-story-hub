@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCategories } from '@/hooks/useCategories';
 import { RichTextEditor } from './RichTextEditor';
+import { SafeHtmlRenderer } from './SafeHtmlRenderer';
 import { supabase } from '@/integrations/supabase/client';
 import { Post } from '@/types';
 import { Loader2, X, Plus, Upload, Eye } from 'lucide-react';
@@ -288,9 +289,9 @@ export const PostEditor: React.FC<PostEditorProps> = ({
                 <p>{formData.tldr}</p>
               </div>
             )}
-            <div
+            <SafeHtmlRenderer
+              html={formData.content_html}
               className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: formData.content_html }}
             />
           </CardContent>
         </Card>

@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Post } from '@/types';
 import { PostActions } from './PostActions';
 import { Clock } from 'lucide-react';
+import { SafeHtmlRenderer } from '@/components/SafeHtmlRenderer';
 
 interface PostCardProps {
   post: Post;
@@ -145,11 +146,9 @@ export const PostCard: React.FC<PostCardProps> = ({
         )}
 
         {post.content_html && !post.tldr && (
-          <div 
+          <SafeHtmlRenderer 
+            html={truncateText(post.content_html.replace(/<[^>]*>/g, ''), 150)}
             className="text-sm text-muted-foreground line-clamp-3"
-            dangerouslySetInnerHTML={{ 
-              __html: truncateText(post.content_html.replace(/<[^>]*>/g, ''), 150) 
-            }}
           />
         )}
 

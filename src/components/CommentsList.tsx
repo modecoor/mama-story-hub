@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
 import { Comment } from '@/types';
 import { CommentForm } from './CommentForm';
+import { SafeHtmlRenderer } from '@/components/SafeHtmlRenderer';
 
 interface CommentsListProps {
   comments: Comment[];
@@ -54,9 +55,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
             </span>
           </div>
           
-          <div 
+          <SafeHtmlRenderer 
+            html={comment.content_html}
             className="text-sm text-foreground prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: comment.content_html }}
           />
           
           <div className="flex items-center space-x-2">
