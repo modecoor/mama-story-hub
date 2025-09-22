@@ -20,10 +20,10 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 15%;
 
-    /* Основной акцент - лаванда */
-    --primary: 270 50% 75%;
+    /* Основной акцент - улучшенный для контрастности */
+    --primary: 260 60% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 270 50% 70%;
+    --primary-hover: 260 60% 55%;
 
     /* Вторичный цвет - мята */
     --secondary: 160 30% 85%;
@@ -90,10 +90,10 @@ All colors MUST be HSL.
     --popover: 240 10% 10%;
     --popover-foreground: 240 5% 92%;
 
-    /* Более яркие акценты в тёмной теме */
-    --primary: 270 50% 65%;
+    /* Более яркие акценты в тёмной теме для контрастности */
+    --primary: 260 60% 70%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 270 50% 70%;
+    --primary-hover: 260 60% 75%;
 
     --secondary: 160 30% 70%;
     --secondary-foreground: 160 50% 15%;
