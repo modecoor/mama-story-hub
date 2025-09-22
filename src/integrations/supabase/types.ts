@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_jobs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: number
+          integration_id: string | null
+          payload: Json
+          provider: string
+          result: Json | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: number
+          integration_id?: string | null
+          payload: Json
+          provider: string
+          result?: Json | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: number
+          integration_id?: string | null
+          payload?: Json
+          provider?: string
+          result?: Json | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_jobs_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -89,6 +133,81 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      integrations: {
+        Row: {
+          api_key: string | null
+          config: Json | null
+          created_at: string | null
+          created_by: string | null
+          enabled: boolean | null
+          endpoint_url: string | null
+          id: string
+          name: string
+          type: string
+          updated_at: string | null
+          webhook_secret: string | null
+        }
+        Insert: {
+          api_key?: string | null
+          config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          enabled?: boolean | null
+          endpoint_url?: string | null
+          id?: string
+          name: string
+          type: string
+          updated_at?: string | null
+          webhook_secret?: string | null
+        }
+        Update: {
+          api_key?: string | null
+          config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          enabled?: boolean | null
+          endpoint_url?: string | null
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string | null
+          webhook_secret?: string | null
+        }
+        Relationships: []
+      }
+      moderation_actions: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: number
+          metadata: Json | null
+          moderator_id: string | null
+          reason: string | null
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: number
+          metadata?: Json | null
+          moderator_id?: string | null
+          reason?: string | null
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: number
+          metadata?: Json | null
+          moderator_id?: string | null
+          reason?: string | null
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
       }
       post_tags: {
         Row: {
@@ -337,6 +456,24 @@ export type Database = {
           },
         ]
       }
+      stats_cache: {
+        Row: {
+          data: Json
+          key: string
+          updated_at: string | null
+        }
+        Insert: {
+          data: Json
+          key: string
+          updated_at?: string | null
+        }
+        Update: {
+          data?: Json
+          key?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           created_at: string
@@ -411,9 +548,17 @@ export type Database = {
           title: string
         }[]
       }
+      get_homepage_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      update_stats_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "author" | "editor" | "admin" | "moderator"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -540,6 +685,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["user", "author", "editor", "admin", "moderator"],
+    },
   },
 } as const
