@@ -284,6 +284,12 @@ const AIIntegrations = () => {
                           <div className="text-sm text-muted-foreground">
                             {integrationTypes.find(t => t.value === integration.type)?.label}
                           </div>
+                          {integration.credentials_in_vault && (
+                            <div className="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
+                              <Key className="h-3 w-3" />
+                              Учетные данные зашифрованы
+                            </div>
+                          )}
                         </div>
                         <Badge className={getStatusColor(integration.enabled)}>
                           {integration.enabled ? 'Включена' : 'Отключена'}

@@ -40,10 +40,10 @@ serve(async (req) => {
       );
     }
 
-    // Get integration configuration
+    // Get integration configuration (without sensitive credentials)
     const { data: integration, error: integrationError } = await supabase
       .from('integrations')
-      .select('*')
+      .select('id, name, type, endpoint_url, config, enabled, credentials_in_vault, created_by')
       .eq('id', payload.integration_id)
       .eq('enabled', true)
       .single();
@@ -59,8 +59,27 @@ serve(async (req) => {
       );
     }
 
+    // Retrieve credentials from Vault if stored there
+    let credentials: { api_key?: string; webhook_secret?: string } = {};
+    if (integration.credentials_in_vault) {
+      const { data: creds, error: credError } = await supabase
+        .rpc('get_integration_credentials', { integration_id: payload.integration_id });
+
+      if (credError) {
+        console.error('Error retrieving credentials from Vault:', credError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to retrieve integration credentials' }),
+          { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+      credentials = creds || {};
+    }
+
     // Verify webhook signature if secret is configured
-    if (integration.webhook_secret) {
+    if (credentials.webhook_secret) {
       const signature = req.headers.get('x-signature');
       // In a real implementation, you would verify HMAC signature here
       console.log('Webhook signature check (mock):', signature);
@@ -98,11 +117,15 @@ serve(async (req) => {
     try {
       // Handle different integration types
       if (integration.type === 'openai') {
+        if (!credentials.api_key) {
+          throw new Error('API key not found for OpenAI integration');
+        }
+
         // Generate content using OpenAI
         const openaiResponse = await fetch(`${integration.endpoint_url}/chat/completions`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${integration.api_key}`,
+            'Authorization': `Bearer ${credentials.api_key}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({

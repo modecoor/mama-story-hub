@@ -11,6 +11,7 @@ interface Integration {
   webhook_secret?: string;
   config: any;
   enabled: boolean;
+  credentials_in_vault?: boolean;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -84,9 +85,15 @@ export const useIntegrations = () => {
 
   const createIntegration = async (integration: Omit<Integration, 'id' | 'created_by' | 'created_at' | 'updated_at'>) => {
     try {
+      // First create the integration record without credentials
+      const { api_key, webhook_secret, ...integrationData } = integration;
+      
       const { data, error } = await supabase
         .from('integrations')
-        .insert([integration])
+        .insert([{
+          ...integrationData,
+          credentials_in_vault: false,
+        }])
         .select()
         .single();
 
@@ -94,9 +101,27 @@ export const useIntegrations = () => {
         throw error;
       }
 
+      // Store credentials securely in Vault
+      if (api_key || webhook_secret) {
+        const { error: credError } = await supabase.functions.invoke('manage-integration-credentials', {
+          body: {
+            action: 'store',
+            integrationId: data.id,
+            apiKey: api_key,
+            webhookSecret: webhook_secret,
+          },
+        });
+
+        if (credError) {
+          // Rollback: delete the integration if credential storage fails
+          await supabase.from('integrations').delete().eq('id', data.id);
+          throw new Error('Failed to securely store credentials');
+        }
+      }
+
       toast({
         title: 'Интеграция создана',
-        description: 'Интеграция успешно добавлена',
+        description: 'Интеграция и учетные данные безопасно сохранены',
       });
 
       fetchIntegrations();
@@ -105,7 +130,7 @@ export const useIntegrations = () => {
       console.error('Error creating integration:', err);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось создать интеграцию',
+        description: err.message || 'Не удалось создать интеграцию',
         variant: 'destructive',
       });
       throw err;
@@ -141,10 +166,13 @@ export const useIntegrations = () => {
 
   const deleteIntegration = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('integrations')
-        .delete()
-        .eq('id', id);
+      // Use the secure function to delete both integration and credentials
+      const { error } = await supabase.functions.invoke('manage-integration-credentials', {
+        body: {
+          action: 'delete',
+          integrationId: id,
+        },
+      });
 
       if (error) {
         throw error;
@@ -152,7 +180,7 @@ export const useIntegrations = () => {
 
       toast({
         title: 'Интеграция удалена',
-        description: 'Интеграция успешно удалена',
+        description: 'Интеграция и учетные данные безопасно удалены',
       });
 
       fetchIntegrations();

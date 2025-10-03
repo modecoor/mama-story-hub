@@ -140,6 +140,7 @@ export type Database = {
           config: Json | null
           created_at: string | null
           created_by: string | null
+          credentials_in_vault: boolean | null
           enabled: boolean | null
           endpoint_url: string | null
           id: string
@@ -153,6 +154,7 @@ export type Database = {
           config?: Json | null
           created_at?: string | null
           created_by?: string | null
+          credentials_in_vault?: boolean | null
           enabled?: boolean | null
           endpoint_url?: string | null
           id?: string
@@ -166,6 +168,7 @@ export type Database = {
           config?: Json | null
           created_at?: string | null
           created_by?: string | null
+          credentials_in_vault?: boolean | null
           enabled?: boolean | null
           endpoint_url?: string | null
           id?: string
@@ -550,6 +553,10 @@ export type Database = {
       }
       get_homepage_stats: {
         Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_integration_credentials: {
+        Args: { integration_id: string }
         Returns: Json
       }
       update_stats_cache: {
