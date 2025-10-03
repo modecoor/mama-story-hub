@@ -136,7 +136,6 @@ export type Database = {
       }
       integrations: {
         Row: {
-          api_key: string | null
           config: Json | null
           created_at: string | null
           created_by: string | null
@@ -147,10 +146,8 @@ export type Database = {
           name: string
           type: string
           updated_at: string | null
-          webhook_secret: string | null
         }
         Insert: {
-          api_key?: string | null
           config?: Json | null
           created_at?: string | null
           created_by?: string | null
@@ -161,10 +158,8 @@ export type Database = {
           name: string
           type: string
           updated_at?: string | null
-          webhook_secret?: string | null
         }
         Update: {
-          api_key?: string | null
           config?: Json | null
           created_at?: string | null
           created_by?: string | null
@@ -175,7 +170,6 @@ export type Database = {
           name?: string
           type?: string
           updated_at?: string | null
-          webhook_secret?: string | null
         }
         Relationships: []
       }
