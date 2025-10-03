@@ -7,8 +7,9 @@ interface Integration {
   name: string;
   type: 'openai' | 'n8n' | 'nodul' | 'custom';
   endpoint_url?: string;
-  api_key?: string;
-  webhook_secret?: string;
+  // NOTE: api_key and webhook_secret are NEVER stored in the database
+  // They are enforced to be NULL via CHECK constraints for security
+  // All credentials are stored securely in Supabase Vault
   config: any;
   enabled: boolean;
   credentials_in_vault?: boolean;
@@ -41,9 +42,10 @@ export const useIntegrations = () => {
       setLoading(true);
       setError(null);
 
+      // Explicitly exclude sensitive fields that are enforced to be NULL
       const { data, error: fetchError } = await supabase
         .from('integrations')
-        .select('*')
+        .select('id, name, type, endpoint_url, config, enabled, credentials_in_vault, created_by, created_at, updated_at')
         .order('created_at', { ascending: false });
 
       if (fetchError) {
@@ -83,15 +85,16 @@ export const useIntegrations = () => {
     }
   };
 
-  const createIntegration = async (integration: Omit<Integration, 'id' | 'created_by' | 'created_at' | 'updated_at'>) => {
+  const createIntegration = async (
+    integration: Omit<Integration, 'id' | 'created_by' | 'created_at' | 'updated_at'>,
+    credentials?: { api_key?: string; webhook_secret?: string }
+  ) => {
     try {
       // First create the integration record without credentials
-      const { api_key, webhook_secret, ...integrationData } = integration;
-      
       const { data, error } = await supabase
         .from('integrations')
         .insert([{
-          ...integrationData,
+          ...integration,
           credentials_in_vault: false,
         }])
         .select()
@@ -102,13 +105,13 @@ export const useIntegrations = () => {
       }
 
       // Store credentials securely in Vault
-      if (api_key || webhook_secret) {
+      if (credentials?.api_key || credentials?.webhook_secret) {
         const { error: credError } = await supabase.functions.invoke('manage-integration-credentials', {
           body: {
             action: 'store',
             integrationId: data.id,
-            apiKey: api_key,
-            webhookSecret: webhook_secret,
+            apiKey: credentials.api_key,
+            webhookSecret: credentials.webhook_secret,
           },
         });
 

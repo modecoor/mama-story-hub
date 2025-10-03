@@ -30,6 +30,8 @@ interface IntegrationFormData {
   name: string;
   type: 'openai' | 'n8n' | 'nodul' | 'custom';
   endpoint_url?: string;
+  // Credentials are captured in the form but never stored in the database
+  // They're sent directly to the Vault via the edge function
   api_key?: string;
   webhook_secret?: string;
   config: any;
@@ -99,7 +101,11 @@ const AIIntegrations = () => {
 
   const handleCreateIntegration = async () => {
     try {
-      await createIntegration(formData);
+      const { api_key, webhook_secret, ...integrationData } = formData;
+      await createIntegration(
+        integrationData,
+        { api_key, webhook_secret }
+      );
       setIsCreateDialogOpen(false);
       setFormData({
         name: '',
